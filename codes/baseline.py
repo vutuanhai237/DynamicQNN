@@ -39,12 +39,12 @@ cmodel.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 H1 = cmodel.fit(x_train, y_train, validation_data=(x_val, y_val),
-          batch_size=16, epochs=30, verbose=1)
+          batch_size=16, epochs=30, verbose=0)
 hmodel.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 H2 = hmodel.fit(xq_train, y_train, validation_data=(xq_val, y_val),
-          batch_size=1, epochs=10, verbose=1)
+          batch_size=16, epochs=30, verbose=0)
 
 print("Classical_model: ", cmodel.evaluate(x_test, y_test))
 print("Hybrid_model: ", hmodel.evaluate(np.array(xq_test), y_test))
