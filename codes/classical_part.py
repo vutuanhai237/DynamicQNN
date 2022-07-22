@@ -3,6 +3,8 @@ import keras
 import keras.layers as krl
 import qiskit
 import constant
+import types
+from keras.utils import np_utils
 
 def normalize_count(counts, n_qubits):
     for i in range(0, 2**n_qubits):
@@ -63,9 +65,9 @@ def classical_model():
 
 def hybrid_model():
     model = keras.models.Sequential()
-    model.add(krl.MaxPooling2D(pool_size=(2,2)))
-    model.add(krl.Conv2D(1, (5, 5), activation='relu'))
-    model.add(krl.MaxPooling2D(pool_size=(2,2)))
+    # model.add(krl.MaxPooling2D(pool_size=(2,2)))
+    # model.add(krl.Conv2D(1, (5, 5), activation='relu'))
+    # model.add(krl.MaxPooling2D(pool_size=(2,2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
     model.add(krl.Dropout(0.4))
@@ -86,3 +88,43 @@ def quanvolutional(vector):
     counts = measure(qc, list(range(0, n)))
     normalized_count = normalize_count(counts, n)
     return normalized_count
+
+def converter(data: np.ndarray, quanv: types.FunctionType):
+    quantum_datas = []
+    for quantum_data in data:
+        quantum_datas.append(quanv(quantum_data))
+    quantum_datas = np.array(quantum_datas)
+    return quantum_datas
+
+def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model):
+    """_summary_
+
+    Args:
+        n_train (int): number of train items
+        n_val (int): number of validation items
+        n_test (int): number of test items
+        quanv (types.FunctionType, optional): _description_. Defaults to quantum_model.
+
+    Returns:
+        tuple: Splitted dataset
+    """
+    
+    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+    
+    x_train, y_train = x_train[:n_train,:], y_train[:n_train]
+    x_val, y_val = x_train[n_train:n_train + n_val,:], y_train[n_train:n_train + n_val]
+    x_test, y_test = x_test[:n_test,:], y_test[:n_test]
+
+    x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
+    x_val = x_val.reshape(x_val.shape[0], 28, 28, 1)
+    x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+    
+    y_train = np_utils.to_categorical(y_train, 10)
+    y_val = np_utils.to_categorical(y_val, 10)
+    y_test = np_utils.to_categorical(y_test, 10)
+
+    xq_train = converter(x_train, quanv)
+    xq_val = converter(x_val, quanv)
+    xq_test = converter(x_test, quanv)
+
+    return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
