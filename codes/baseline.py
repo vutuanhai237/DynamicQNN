@@ -45,9 +45,7 @@ hmodel.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 H2 = hmodel.fit(xq_train, y_train, validation_data=(xq_val, y_val),
           batch_size=1, epochs=10, verbose=1)
-print(x_test.shape)
-print(xq_test.shape)
-print(y_test.shape)
+
 print("Classical_model: ", cmodel.evaluate(x_test, y_test))
 print("Hybrid_model: ", hmodel.evaluate(np.array(xq_test), y_test))
 np.savetxt('h1history.txt', H1.history['loss'])
