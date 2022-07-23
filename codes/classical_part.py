@@ -4,6 +4,7 @@ import keras.layers as krl
 import qiskit
 import constant
 import types
+import random
 from keras.utils import np_utils
 
 def normalize_count(counts, n_qubits):
@@ -110,19 +111,26 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
     """
     
     (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
-    
-    x_train, y_train = x_train[:n_train,:], y_train[:n_train]
-    x_val, y_val = x_train[n_train:n_train + n_val,:], y_train[n_train:n_train + n_val]
+    # Get k random item in whole MNIST has 60000 train / 10000 test
+    random_itrain = random.sample(range(0, 4000), n_train + n_val)
+    random_itest = random.sample(range(0, 10000), n_test)
+    x_train1 = np.asarray([x_train[i] for i in random_itrain])
+    y_train1 = np.asarray([y_train[i] for i in random_itrain])
+    x_test = np.asarray([x_test[i] for i in random_itest])
+    y_test = np.asarray([y_test[i] for i in random_itest])
+    # Split train / val / test
+    x_train, y_train = x_train1[:n_train,:], y_train1[:n_train]
+    x_val, y_val = x_train1[n_train:n_train + n_val,:], y_train1[n_train:n_train + n_val]
     x_test, y_test = x_test[:n_test,:], y_test[:n_test]
-
+    # Reshape for fitting with Keras input
     x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
     x_val = x_val.reshape(x_val.shape[0], 28, 28, 1)
     x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
-    
+    # One-hot encoding
     y_train = np_utils.to_categorical(y_train, 10)
     y_val = np_utils.to_categorical(y_val, 10)
     y_test = np_utils.to_categorical(y_test, 10)
-
+    # Create post-processing data (the data that has gone through the quanvolutional layer)
     xq_train = converter(x_train, quanv)
     xq_val = converter(x_val, quanv)
     xq_test = converter(x_test, quanv)

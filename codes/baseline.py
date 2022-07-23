@@ -1,32 +1,52 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from keras.utils import np_utils
-import keras
-from keras.datasets import mnist
 import classical_part
-from keras.utils import np_utils
+import utilities
+historiesH1 = []
+test_accuraciesH1 = []
+historiesH2 = []
+test_accuraciesH2 = []
+for i in range(0, 100):
+    x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist(3600, 1200, 1200)
+    
+    
+    cmodel = classical_part.classical_model()
+    cmodel.compile(loss='categorical_crossentropy',
+                optimizer='adam',
+                metrics=['accuracy'])
+    H1 = cmodel.fit(x_train, y_train, validation_data=(x_val, y_val),
+            batch_size=1, epochs=30, verbose=0)
+    
+    historiesH1.append(H1.history)
+    _, test_accuracy = cmodel.evaluate(x_test, y_test)
+    test_accuraciesH1.append(test_accuracy)
 
-x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist(3600, 1200, 1200)
-cmodel = classical_part.classical_model()
-hmodel = classical_part.hybrid_model()
-
-cmodel.compile(loss='categorical_crossentropy',
+    
+    hmodel = classical_part.hybrid_model()
+    hmodel.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
-H1 = cmodel.fit(x_train, y_train, validation_data=(x_val, y_val),
+    H2 = hmodel.fit(xq_train, y_train, validation_data=(xq_val, y_val),
           batch_size=4, epochs=30, verbose=0)
-hmodel.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
-H2 = hmodel.fit(xq_train, y_train, validation_data=(xq_val, y_val),
-          batch_size=4, epochs=30, verbose=0)
+    historiesH2.append(H2.history)
+    _, test_accuracy = hmodel.evaluate(xq_test, y_test)
+    test_accuraciesH2.append(test_accuracy)
+    
 
-H3 = hmodel.fit(x_train, y_train, validation_data=(x_val, y_val),
+    hmodel1 = classical_part.hybrid_model()
+    hmodel1.compile(loss='categorical_crossentropy',
+                optimizer='adam',
+                metrics=['accuracy'])
+    H3 = hmodel1.fit(x_train, y_train, validation_data=(x_val, y_val),
           batch_size=4, epochs=30, verbose=0)
+    historiesH3 = []
+    test_accuraciesH3 = []
+    historiesH3.append(H3.history)
+    _, test_accuracy = hmodel1.evaluate(x_test, y_test)
+    test_accuraciesH3.append(test_accuracy)
 
-print("H1 model: ", cmodel.evaluate(x_test, y_test))
-print("H2 model: ", hmodel.evaluate(np.array(xq_test), y_test))
-print("H3 model: ", hmodel.evaluate(np.array(x_test), y_test))
-np.savetxt('h1history.txt', H1.history['loss'])
-np.savetxt('h2history.txt', H2.history['loss'])
-np.savetxt('h3history.txt', H3.history['loss'])
+utilities.save_history_train('./exps', 'h1', historiesH1)
+np.savetxt('exps/h1test.txt', test_accuraciesH1)
+utilities.save_history_train('./exps', 'h2', historiesH2)
+np.savetxt('exps/h2test.txt', test_accuraciesH2)
+utilities.save_history_train('./exps', 'h3', historiesH3)
+np.savetxt('exps/h3test.txt', test_accuraciesH3)
