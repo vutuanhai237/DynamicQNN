@@ -112,7 +112,7 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
     
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     # Get k random item in whole MNIST has 60000 train / 10000 test
-    random_itrain = random.sample(range(0, 4000), n_train + n_val)
+    random_itrain = random.sample(range(0, 60000), n_train + n_val)
     random_itest = random.sample(range(0, 10000), n_test)
     x_train1 = np.asarray([x_train[i] for i in random_itrain])
     y_train1 = np.asarray([y_train[i] for i in random_itrain])
