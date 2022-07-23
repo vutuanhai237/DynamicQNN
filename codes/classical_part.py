@@ -6,7 +6,7 @@ import constant
 import types
 import random
 from keras.utils import np_utils
-
+from keras.datasets import mnist
 def normalize_count(counts, n_qubits):
     for i in range(0, 2**n_qubits):
         x = (str(bin(i)[2:]))
@@ -110,7 +110,7 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
         tuple: Splitted dataset
     """
     
-    (x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
     # Get k random item in whole MNIST has 60000 train / 10000 test
     random_itrain = random.sample(range(0, 4000), n_train + n_val)
     random_itest = random.sample(range(0, 10000), n_test)
