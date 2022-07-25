@@ -137,7 +137,7 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
 
     return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
 
-def load_fashion_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model):
+def load_mnist_fashion(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model):
     """_summary_
 
     Args:

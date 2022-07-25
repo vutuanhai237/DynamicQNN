@@ -6,7 +6,7 @@ test_accuraciesH1 = []
 historiesH2 = []
 test_accuraciesH2 = []
 for i in range(0, 20):
-    x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist(3600, 1200, 1200)
+    x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist(1200, 400, 400)
     
     
     cmodel = classical_part.classical_model()
