@@ -54,9 +54,9 @@ def quantum_model(image):
 
 def classical_model():
     model = keras.models.Sequential()
-    model.add(krl.Conv2D(1, (5, 5), activation='relu', input_shape=(28,28,1)))
+    model.add(krl.Conv2D(50, (5, 5), activation='relu', input_shape=(28,28,1)))
     model.add(krl.MaxPooling2D(pool_size=(2,2)))
-    model.add(krl.Conv2D(1, (5, 5), activation='relu'))
+    model.add(krl.Conv2D(50, (5, 5), activation='relu'))
     model.add(krl.MaxPooling2D(pool_size=(2,2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
@@ -97,7 +97,7 @@ def converter(data: np.ndarray, quanv: types.FunctionType):
     quantum_datas = np.array(quantum_datas)
     return quantum_datas
 
-def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model):
+def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model, is_take_xq = False):
     """_summary_
 
     Args:
@@ -130,12 +130,16 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
     y_train = np_utils.to_categorical(y_train, 10)
     y_val = np_utils.to_categorical(y_val, 10)
     y_test = np_utils.to_categorical(y_test, 10)
-    # Create post-processing data (the data that has gone through the quanvolutional layer)
-    xq_train = converter(x_train, quanv)
-    xq_val = converter(x_val, quanv)
-    xq_test = converter(x_test, quanv)
+    
 
-    return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
+    if is_take_xq:
+        return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
+    else:
+        # Create post-processing data (the data that has gone through the quanvolutional layer)
+        xq_train = converter(x_train, quanv)
+        xq_val = converter(x_val, quanv)
+        xq_test = converter(x_test, quanv)
+        return x_train, y_train, x_val, y_val, x_test, y_test
 
 def load_mnist_fashion(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model):
     """_summary_
