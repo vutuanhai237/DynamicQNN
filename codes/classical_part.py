@@ -133,12 +133,13 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
     
 
     if is_take_xq:
-        return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
-    else:
         # Create post-processing data (the data that has gone through the quanvolutional layer)
         xq_train = converter(x_train, quanv)
         xq_val = converter(x_val, quanv)
         xq_test = converter(x_test, quanv)
+        return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
+    else:
+        
         return x_train, y_train, x_val, y_val, x_test, y_test
 
 def load_mnist_fashion(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model):
