@@ -20,5 +20,5 @@ for i in range(0, 20):
       test_accuraciesH1.append(test_accuracy)
     
 
-utilities.save_history_train('./exps_mnist_fashion/h1_50filter', 'h1', historiesH1)
-np.savetxt('exps_mnist_fashion/h1_50filter/h1test.txt', test_accuraciesH1)
+utilities.save_history_train('./exps_mnist_fashion/h1_20filter', 'h1', historiesH1)
+np.savetxt('exps_mnist_fashion/h1_20filter/h1test.txt', test_accuraciesH1)

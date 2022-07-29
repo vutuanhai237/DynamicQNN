@@ -54,9 +54,9 @@ def quantum_model(image):
 
 def classical_model():
     model = keras.models.Sequential()
-    model.add(krl.Conv2D(50, (5, 5), activation='relu', input_shape=(28,28,1)))
+    model.add(krl.Conv2D(20, (5, 5), activation='relu', input_shape=(28,28,1)))
     model.add(krl.MaxPooling2D(pool_size=(2,2)))
-    model.add(krl.Conv2D(50, (5, 5), activation='relu'))
+    model.add(krl.Conv2D(20, (5, 5), activation='relu'))
     model.add(krl.MaxPooling2D(pool_size=(2,2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
