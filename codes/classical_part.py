@@ -52,11 +52,28 @@ def quantum_model(image):
                 out[i // 2, j // 2, c] = exp_values[c]
     return out
 
+def quantum_model_4(image):
+    n_image = image.shape[0]
+    kernal_size = 4
+    out = np.zeros((n_image // 4, n_image // 4, kernal_size * 2))
+    for i in range(0, n_image, kernal_size):
+        for j in range(0, n_image, kernal_size):  
+            exp_values = quanvolutional([
+                image[i, j],
+                image[i, j + 1],
+                image[i + 1, j],
+                image[i + 1, j + 1]
+            ])
+
+            for c in range(4):
+                out[i // 4, j // 4, c] = exp_values[c]
+    return out
+
 def classical_model():
     model = keras.models.Sequential()
-    model.add(krl.Conv2D(20, (5, 5), activation='relu', input_shape=(28,28,1)))
+    model.add(krl.Conv2D(1, (5, 5), activation='relu', input_shape=(28,28,1)))
     model.add(krl.MaxPooling2D(pool_size=(2,2)))
-    model.add(krl.Conv2D(20, (5, 5), activation='relu'))
+    model.add(krl.Conv2D(1, (5, 5), activation='relu'))
     model.add(krl.MaxPooling2D(pool_size=(2,2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
@@ -77,7 +94,7 @@ def hybrid_model():
 
 def quanvolutional(vector):
     if np.sum(vector) == 0:
-        return [0, 0, 0, 0]
+        return np.ones(len(vector))
     vector = np.squeeze(vector)
     vector = vector / np.linalg.norm(vector)
     n = int(np.log2(vector.shape[0]))
