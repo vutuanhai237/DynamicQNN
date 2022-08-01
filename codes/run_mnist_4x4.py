@@ -14,7 +14,7 @@ for i in range(0, 20):
                   optimizer='adam',
                   metrics=['accuracy'])
       H2 = hmodel.fit(xq_train, y_train, validation_data=(xq_val, y_val),
-            batch_size=4, epochs=30, verbose=0)
+            batch_size=4, epochs=100, verbose=0)
       historiesH2.append(H2.history)
       _, test_accuracy = hmodel.evaluate(xq_test, y_test)
       test_accuraciesH2.append(test_accuracy)
