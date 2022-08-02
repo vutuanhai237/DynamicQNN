@@ -7,6 +7,11 @@ import types
 import random
 from keras.utils import np_utils
 from keras.datasets import mnist, fashion_mnist
+import numpy as np
+import entangled_circuit
+from typing import List, Tuple, Union
+
+
 def normalize_count(counts, n_qubits):
     for i in range(0, 2**n_qubits):
         x = (str(bin(i)[2:]))
@@ -36,37 +41,40 @@ def measure(qc: qiskit.QuantumCircuit, qubits, cbits=[]):
         shots = constant.num_shots).result().get_counts()
     return counts
 
-def quantum_model(image):
-    n_image = image.shape[0]
-    kernal_size = 2
-    out = np.zeros((n_image // 2, n_image // 2, kernal_size * 2))
-    for i in range(0, n_image, kernal_size):
-        for j in range(0, n_image, kernal_size):  
-            exp_values = quanvolutional([
-                image[i, j],
-                image[i, j + 1],
-                image[i + 1, j],
-                image[i + 1, j + 1]
-            ])
-            for c in range(4):
-                out[i // 2, j // 2, c] = exp_values[c]
-    return out
+def add_padding(matrix: np.ndarray, 
+                padding: Tuple[int, int]) -> np.ndarray:
+    """Adds padding to the matrix. 
+    Args:
+        matrix (np.ndarray): Matrix that needs to be padded. Type is List[List[float]] casted to np.ndarray.
+        padding (Tuple[int, int]): Tuple with number of rows and columns to be padded. With the `(r, c)` padding we addding `r` rows to the top and bottom and `c` columns to the left and to the right of the matrix
+    Returns:
+        np.ndarray: Padded matrix with shape `n + 2 * r, m + 2 * c`.
+    """
+    n, m = matrix.shape
+    r, c = padding
+    padded_matrix = np.zeros((n + r * 2, m + c * 2))
+    padded_matrix[r : n + r, c : m + c] = matrix
+    return padded_matrix
 
-def quantum_model_4(image):
+def quanv(image, filter: types.FunctionType):
     n_image = image.shape[0]
-    kernal_size = 4
-    out = np.zeros((n_image // 4, n_image // 4, kernal_size * 2))
-    for i in range(0, n_image, kernal_size):
-        for j in range(0, n_image, kernal_size):  
-            exp_values = quanvolutional([
-                image[i, j],
-                image[i, j + 1],
-                image[i + 1, j],
-                image[i + 1, j + 1]
-            ])
-
-            for c in range(4):
-                out[i // 4, j // 4, c] = exp_values[c]
+    kernel_size = 4
+    if n_image % 4 != 0:
+        image = add_padding(image, ((n_image % 4) // 2, (n_image % 4) // 2))
+        n_image = image.shape[0]
+    out = np.zeros((n_image // kernel_size, n_image // kernel_size, kernel_size ** 2))
+    for i in range(0, n_image, kernel_size):
+        for j in range(0, n_image, kernel_size): 
+            sub_image = image[i:i + kernel_size, j:j + kernel_size] 
+            # Turn normal image to quantum state
+            if np.all(sub_image==0):
+                sub_image[0] = 1
+            sub_image = np.squeeze(sub_image)
+            sub_image = sub_image / np.linalg.norm(sub_image)
+            # Convert quantum state to quantum probabilities
+            exp_values = filter(sub_image.flatten())
+            for c in range(kernel_size**2):
+                out[i // kernel_size, j // kernel_size, c] = exp_values[c]
     return out
 
 def classical_model():
@@ -83,38 +91,20 @@ def classical_model():
 
 def hybrid_model():
     model = keras.models.Sequential()
-    # model.add(krl.MaxPooling2D(pool_size=(2,2)))
-    # model.add(krl.Conv2D(1, (5, 5), activation='relu'))
-    # model.add(krl.MaxPooling2D(pool_size=(2,2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
     model.add(krl.Dropout(0.4))
     model.add(krl.Dense(10, activation='softmax'))
     return model
 
-def quanvolutional(vector):
-    if np.sum(vector) == 0:
-        return np.ones(len(vector))
-    vector = np.squeeze(vector)
-    vector = vector / np.linalg.norm(vector)
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
-    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n,))
-    for i in range(1, n):
-        qc.cry(thetas[i], 0, i)
-    counts = measure(qc, list(range(0, n)))
-    normalized_count = normalize_count(counts, n)
-    return normalized_count
-
-def converter(data: np.ndarray, quanv: types.FunctionType):
+def converter(data: np.ndarray, filter: types.FunctionType):
     quantum_datas = []
     for quantum_data in data:
-        quantum_datas.append(quanv(quantum_data))
+        quantum_datas.append(quanv(quantum_data, filter))
     quantum_datas = np.array(quantum_datas)
     return quantum_datas
 
-def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model, is_take_xq = False):
+def load_mnist(n_train: int, n_val: int, n_test: int, filter: types.FunctionType, is_take_xq = False):
     """_summary_
 
     Args:
@@ -151,15 +141,15 @@ def load_mnist(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType 
 
     if is_take_xq:
         # Create post-processing data (the data that has gone through the quanvolutional layer)
-        xq_train = converter(x_train, quanv)
-        xq_val = converter(x_val, quanv)
-        xq_test = converter(x_test, quanv)
+        xq_train = converter(x_train, filter)
+        xq_val = converter(x_val, filter)
+        xq_test = converter(x_test, filter)
         return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
     else:
         
         return x_train, y_train, x_val, y_val, x_test, y_test
 
-def load_mnist_fashion(n_train: int, n_val: int, n_test: int, quanv: types.FunctionType = quantum_model, is_take_xq = False):
+def load_mnist_fashion(n_train: int, n_val: int, n_test: int, filter: types.FunctionType, is_take_xq = False):
     """_summary_
 
     Args:
@@ -194,9 +184,9 @@ def load_mnist_fashion(n_train: int, n_val: int, n_test: int, quanv: types.Funct
     y_test = np_utils.to_categorical(y_test, 10)
     # Create post-processing data (the data that has gone through the quanvolutional layer)
     if is_take_xq:
-        xq_train = converter(x_train, quanv)
-        xq_val = converter(x_val, quanv)
-        xq_test = converter(x_test, quanv)
+        xq_train = converter(x_train, filter)
+        xq_val = converter(x_val, filter)
+        xq_test = converter(x_test, filter)
 
         return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
     else:
