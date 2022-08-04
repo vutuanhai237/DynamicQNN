@@ -52,69 +52,112 @@ def entangled_cnot_layer(qc: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
         k += 1
     return qc
 
-def quanvolutional(vector):
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
+def quanvolutional(qc):
+    n = qc.num_qubits
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(n,))
     for i in range(1, n):
         qc.cry(thetas[i], 0, i)
-    counts = classical_part.measure(qc, list(range(0, n)))
-    normalized_count = classical_part.normalize_count(counts, n)
-    return normalized_count
+    return qc
 
-def quanvolutional1(vector):
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
+def quanvolutional1(qc):
+    n = qc.num_qubits
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(2*n,))
     qc = xz_layer(qc, thetas)
-    counts = classical_part.measure(qc, list(range(0, n)))
-    normalized_count = classical_part.normalize_count(counts, n)
-    return normalized_count
+    return qc
 
-def quanvolutional2(vector):
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
+def quanvolutional2(qc):
+    n = qc.num_qubits
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(2*n,))
     qc = xz_layer(qc, thetas)
     qc = entangled_cnot_layer(qc)
-    counts = classical_part.measure(qc, list(range(0, n)))
-    normalized_count = classical_part.normalize_count(counts, n)
-    return normalized_count
+    return qc
 
-def quanvolutional3(vector):
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
+def quanvolutional3(qc):
+    n = qc.num_qubits 
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n - 1,))
     qc = xz_layer(qc, thetas[:2*n])
     qc = entangled_r_layer(qc, thetas[2*n:], 'rz')
-    counts = classical_part.measure(qc, list(range(0, n)))
-    normalized_count = classical_part.normalize_count(counts, n)
-    return normalized_count
+    return qc
 
-def quanvolutional4(vector):
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
+def quanvolutional4(qc):
+    n = qc.num_qubits
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n - 1,))
     qc = xz_layer(qc, thetas[:2*n])
     qc = entangled_r_layer(qc, thetas[2*n:], 'rx')
-    counts = classical_part.measure(qc, list(range(0, n)))
-    normalized_count = classical_part.normalize_count(counts, n)
-    return normalized_count
+    return qc
 
-def quanvolutional5(vector):
-    n = int(np.log2(vector.shape[0]))
-    qc = qiskit.QuantumCircuit(n, n)
-    qc.initialize(vector, range(0, n))
-    thetas = np.random.uniform(low=0, high=2*np.pi, size=(8*n - 4,))
+# def quanvolutional5(vector):
+#     n = qc.num_qubits
+#     qc = qiskit.QuantumCircuit(n, n)
+#     qc.initialize(vector, range(0, n))
+#     thetas = np.random.uniform(low=0, high=2*np.pi, size=(8*n - 4,))
+#     qc = xz_layer(qc, thetas[:2*n])
+#     k = 2*n
+#     for i in range(0, n - 1):
+#         qc.cry(thetas[k], n - 1, n - 1 - i)
+#     counts = classical_part.measure(qc, list(range(0, n)))
+#     normalized_count = classical_part.normalize_count(counts, n)
+#     return normalized_count
+
+def quanvolutional7(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(5*n - 1,))
     qc = xz_layer(qc, thetas[:2*n])
     k = 2*n
-    for i in range(0, n - 1):
-        qc.cry(thetas[k], n - 1, n - 1 - i)
-    counts = classical_part.measure(qc, list(range(0, n)))
-    normalized_count = classical_part.normalize_count(counts, n)
-    return normalized_count
+    for i in range(0, n - 1, 2):
+        qc.crz(thetas[k], i + 1, i)
+        k += 1
+    qc = xz_layer(qc, thetas[2*n + n // 2: 4*n + n // 2])
+    k = 4*n + n // 2
+    for i in range(0, n - 2, 2):
+        qc.crz(thetas[k], i + 2, i + 1)
+        k += 1
+    return qc
+
+def quanvolutional8(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(5*n - 1,))
+    qc = xz_layer(qc, thetas[:2*n])
+    k = 2*n
+    for i in range(0, n - 1, 2):
+        qc.crx(thetas[k], i + 1, i)
+        k += 1
+    qc = xz_layer(qc, thetas[2*n + n // 2: 4*n + n // 2])
+    k = 4*n + n // 2
+    for i in range(0, n - 2, 2):
+        qc.crx(thetas[k], i + 2, i + 1)
+        k += 1
+    return qc
+
+def quanvolutional9(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n,))
+    for i in range(0, n):
+        qc.h(i)
+    
+    for i in range(0, n - 1, 1):
+        qc.cz(n - i - 1, n - 2 - i)
+    
+    k = 0
+    for i in range(0, n):
+        qc.rx(thetas[k], i)
+        k += 1
+    return qc
+
+def quanvolutional10(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(2*n,))
+    k = 0
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    for i in range(0, n - 1, 1):
+        qc.cz(n - i - 1, n - 2 - i)
+    
+    qc.cz(0, n - 1)
+    
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    return qc
+

@@ -55,6 +55,15 @@ def add_padding(matrix: np.ndarray,
     padded_matrix = np.zeros((n + r * 2, m + c * 2))
     padded_matrix[r : n + r, c : m + c] = matrix
     return padded_matrix
+    
+def connector(vector, filter):
+    n = int(np.log2(vector.shape[0]))
+    qc = qiskit.QuantumCircuit(n, n)
+    qc.initialize(vector, range(0, n))
+    qc = filter(qc)
+    counts = measure(qc, list(range(0, n)))
+    normalized_count = normalize_count(counts, n)
+    return normalized_count
 
 def quanv(image, filter: types.FunctionType):
     n_image = image.shape[0]
@@ -72,7 +81,7 @@ def quanv(image, filter: types.FunctionType):
             sub_image = np.squeeze(sub_image)
             sub_image = sub_image / np.linalg.norm(sub_image)
             # Convert quantum state to quantum probabilities
-            exp_values = filter(sub_image.flatten())
+            exp_values = connector(sub_image.flatten(), filter)
             for c in range(kernel_size**2):
                 out[i // kernel_size, j // kernel_size, c] = exp_values[c]
     return out
