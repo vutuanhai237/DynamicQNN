@@ -15,7 +15,7 @@ for iquanv in list_of_quanv:
             print('Iteration', i)
 
             x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist(
-                  8, 1, 1, list_of_quanv[iquanv], True)
+                  1200, 300, 300, list_of_quanv[iquanv], True)
             
             hmodel = classical_part.hybrid_model()
             hmodel.compile(loss='categorical_crossentropy',
