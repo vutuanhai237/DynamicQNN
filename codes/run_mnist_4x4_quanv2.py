@@ -6,7 +6,6 @@ historiesH2 = []
 test_accuraciesH2 = []
 for i in range(0, 20):
       print('Iteration', i)
-
       x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist(1200, 300, 300, entangled_circuit.quanvolutional2, True)
       
       hmodel = classical_part.hybrid_model()
