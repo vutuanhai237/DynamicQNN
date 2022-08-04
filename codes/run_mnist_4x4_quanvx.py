@@ -6,8 +6,8 @@ historiesH2 = []
 test_accuraciesH2 = []
 list_of_quanv = {
       '1': entangled_circuit.quanvolutional1, 
-      '2': entangled_circuit.quanvolutional3,
-      '3': entangled_circuit.quanvolutional4,
+      '3': entangled_circuit.quanvolutional3,
+      '4': entangled_circuit.quanvolutional4,
 }
 
 for iquanv in list_of_quanv:

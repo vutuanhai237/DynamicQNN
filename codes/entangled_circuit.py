@@ -90,7 +90,7 @@ def quanvolutional3(vector):
     qc.initialize(vector, range(0, n))
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n - 1,))
     qc = xz_layer(qc, thetas[:2*n])
-    qc = entangled_r_layer(qc, 'rz', thetas[2*n:])
+    qc = entangled_r_layer(qc, thetas[2*n:], 'rz')
     counts = classical_part.measure(qc, list(range(0, n)))
     normalized_count = classical_part.normalize_count(counts, n)
     return normalized_count
