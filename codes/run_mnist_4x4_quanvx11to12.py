@@ -5,10 +5,8 @@ import utilities
 historiesH2 = []
 test_accuraciesH2 = []
 list_of_quanv = {
-      '7': entangled_circuit.quanvolutional7, 
-      '8': entangled_circuit.quanvolutional8,
-      '9': entangled_circuit.quanvolutional9,
-      '10': entangled_circuit.quanvolutional10,
+      '11': entangled_circuit.quanvolutional11, 
+      '12': entangled_circuit.quanvolutional12,
 }
 
 for iquanv in list_of_quanv:

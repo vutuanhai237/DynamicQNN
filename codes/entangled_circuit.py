@@ -161,3 +161,48 @@ def quanvolutional10(qc):
         k += 1
     return qc
 
+def quanvolutional11(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(4*n - 4,))
+    k = 0
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    for i in range(0, n):
+        qc.rz(thetas[k], i)
+        k += 1
+    for i in range(0, n - 1, 2):
+        qc.cnot(i + 1, i)
+    for i in range(1, n - 1):
+        qc.ry(thetas[k], i)
+        k += 1
+    for i in range(1, n - 1):
+        qc.rz(thetas[k], i)
+        k += 1
+    
+    for i in range(1, n - 2, 2):
+        qc.cnot(i + 1, i)
+    return qc
+
+def quanvolutional12(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(4*n - 4,))
+    k = 0
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    for i in range(0, n):
+        qc.rz(thetas[k], i)
+        k += 1
+    for i in range(0, n - 1, 2):
+        qc.cz(i + 1, i)
+    for i in range(1, n - 1):
+        qc.ry(thetas[k], i)
+        k += 1
+    for i in range(1, n - 1):
+        qc.rz(thetas[k], i)
+        k += 1
+    
+    for i in range(1, n - 2, 2):
+        qc.cz(i + 1, i)
+    return qc
