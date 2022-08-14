@@ -1,7 +1,7 @@
 # https://arxiv.org/pdf/1905.10876.pdf
 import qiskit, classical_part
 import numpy as np
-
+import math
 def xz_layer(qc: qiskit.QuantumCircuit, thetas) -> qiskit.QuantumCircuit:
     """_summary_
 
@@ -230,4 +230,128 @@ def quanvolutional12(qc):
     
     for i in range(1, n - 2, 2):
         qc.cz(i + 1, i)
+    return qc
+
+def quanvolutional13(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n + n // math.gcd(n, 3),))
+    k = 0
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    qc.crz(thetas[k], n - 1, 0)
+    k += 1
+    for i in range(0, n - 1):
+        qc.crz(thetas[k], n - 2 - i, n - 1 - i)
+        k += 1
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    
+    qc.crz(thetas[k], n - 1, n - 2)
+    k += 1
+    qc.crz(thetas[k], 0, n -1)
+    k += 1
+    qc.crz(thetas[k], 1, 0)
+    k += 1
+    qc.crz(thetas[k], 2, 1)
+    k += 1
+    return qc
+
+def quanvolutional14(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n + n // math.gcd(n, 3),))
+    k = 0
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    qc.crx(thetas[k], n - 1, 0)
+    k += 1
+    for i in range(0, n - 1):
+        qc.crx(thetas[k], n - 2 - i, n - 1 - i)
+        k += 1
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    
+    qc.crx(thetas[k], n - 1, n - 2)
+    k += 1
+    qc.crx(thetas[k], 0, n - 1)
+    k += 1
+    qc.crx(thetas[k], 1, 0)
+    k += 1
+    qc.crx(thetas[k], 2, 1)
+    k += 1
+    return qc
+
+def quanvolutional15(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(2*n,))
+    k = 0
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    qc.cx(n - 1, 0)
+    for i in range(0, n - 1):
+        qc.cx(n - 2 - i, n - 1 - i)
+    for i in range(0, n):
+        qc.ry(thetas[k], i)
+        k += 1
+    
+    qc.cx(n - 1, n - 2)
+    qc.cx(0, n - 1)
+    qc.cx(1, 0)
+    qc.cx(2, 1)
+    return qc
+
+def quanvolutional16(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n - 1,))
+    qc = xz_layer(qc, thetas[:2*n])
+    k = 2*n
+    for i in range(0, n - 1, 2):
+        qc.crz(thetas[k], i + 1, i)
+        k += 1
+    k = 2*n + n // 2
+    for i in range(1, n - 1, 2):
+        qc.crz(thetas[k], i + 1, i)
+        k += 1
+    return qc
+
+def quanvolutional17(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n - 1,))
+    qc = xz_layer(qc, thetas[:2*n])
+    k = 2*n
+    for i in range(0, n - 1, 2):
+        qc.crx(thetas[k], i + 1, i)
+        k += 1
+    k = 2*n + n // 2
+    for i in range(1, n - 1, 2):
+        qc.crx(thetas[k], i + 1, i)
+        k += 1
+    return qc
+
+def quanvolutional18(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n,))
+    qc = xz_layer(qc, thetas[:2*n])
+    k = 2*n
+    qc.crz(thetas[k], n - 1, 0)
+    k += 1
+    for i in range(0, n - 1):
+        qc.crz(thetas[k], n - i - 2, n - 1 - i)
+        k += 1
+    return qc
+
+def quanvolutional19(qc):
+    n = qc.num_qubits
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(3*n,))
+    qc = xz_layer(qc, thetas[:2*n])
+    k = 2*n
+    qc.crx(thetas[k], n - 1, 0)
+    k += 1
+    for i in range(0, n - 1):
+        qc.crx(thetas[k], n - i - 2, n - 1 - i)
+        k += 1
     return qc
