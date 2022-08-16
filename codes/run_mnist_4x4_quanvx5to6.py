@@ -2,14 +2,15 @@ import numpy as np
 import classical_part, entangled_circuit
 import utilities
 
-historiesH2 = []
-test_accuraciesH2 = []
+
 list_of_quanv = {
       '5': entangled_circuit.quanvolutional5, 
       '6': entangled_circuit.quanvolutional6,
 }
 
 for iquanv in list_of_quanv:
+      historiesH2 = []
+      test_accuraciesH2 = []
       for i in range(0, 20):
             print('Iteration', i)
 
