@@ -123,7 +123,6 @@ def quanvolutional6(qc):
     qc = xz_layer(qc, thetas[2*n + 4*n - 4:2*n + 4*n - 4 + 2*n]) 
     return qc
 
-
 def quanvolutional7(qc):
     n = qc.num_qubits
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(5*n - 1,))
