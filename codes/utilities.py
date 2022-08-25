@@ -1,4 +1,5 @@
 import numpy as np
+import os
 def save_history_train(path, model_name, histories):
     losses = []
     val_losses = []
@@ -9,6 +10,8 @@ def save_history_train(path, model_name, histories):
         val_losses.append(history['val_loss'])
         accuracies.append(history['accuracy'])
         val_accuracies.append(history['val_accuracy'])
+    if os.path.exists(path) == False:
+        os.makedirs(path)
     np.savetxt(path + '/' + model_name + 'history_loss.txt', np.asarray(losses))
     np.savetxt(path + '/' + model_name + 'history_val_loss.txt', np.asarray( val_losses))
     np.savetxt(path + '/' + model_name + 'history_accuracy.txt',  np.asarray(accuracies))
