@@ -8,9 +8,9 @@ start = time.perf_counter()
 for i in range(0, 20):
       print('Iteration', i)
       x_train, y_train, x_val, y_val, x_test, y_test = classical_part.load_mnist(
-            1200, 300, 300, entangled_circuit.quanvolutional, False)
+            1200, 300, 300, entangled_circuit.quanvolutional)
       
-      hmodel = classical_part.hybrid_model()
+      hmodel = classical_part.classical_model()
       hmodel.compile(loss='categorical_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
@@ -21,6 +21,6 @@ for i in range(0, 20):
       test_accuraciesH1.append(test_accuracy)
 end = time.perf_counter()
 
-utilities.save_history_train('./exps_mnist/h1_' + str(constant.num_conv_filter) + 'filter', 'h2', historiesH2)
-np.savetxt('exps_mnist/h1_' + str(constant.num_conv_filter) + 'filter/h2test.txt', test_accuraciesH2)
+utilities.save_history_train('./exps_mnist/h1_' + str(constant.num_conv_filter) + 'filter', 'h1', historiesH1)
+np.savetxt('exps_mnist/h1_' + str(constant.num_conv_filter) + 'filter/h1test.txt', test_accuraciesH1)
 np.savetxt('exps_mnist/h1_' + str(constant.num_conv_filter) + 'filter/time.txt', [(end - start)])
