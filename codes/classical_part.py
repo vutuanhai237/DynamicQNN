@@ -101,9 +101,9 @@ def quanv(image, filter: types.FunctionType):
 
 def classical_model():
     model = keras.models.Sequential()
-    model.add(krl.Conv2D(1, (5, 5), activation='relu', input_shape=(28, 28, 1)))
+    model.add(krl.Conv2D(constant.num_conv_filter, (4, 4), activation='relu', input_shape=(28, 28, 1)))
     model.add(krl.MaxPooling2D(pool_size=(2, 2)))
-    model.add(krl.Conv2D(1, (5, 5), activation='relu'))
+    model.add(krl.Conv2D(constant.num_conv_filter, (4, 4), activation='relu'))
     model.add(krl.MaxPooling2D(pool_size=(2, 2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
