@@ -5,7 +5,7 @@ import numpy as np
 
 
 # Training hyperparameter
-num_conv_filter = 9
+num_conv_filter = 40
 num_quanv_filter = 1
 
 num_shots = 10000
