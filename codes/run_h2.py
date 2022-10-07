@@ -21,6 +21,7 @@ for i in range(0, 20):
       test_accuraciesH2.append(test_accuracy)
 end = time.perf_counter()
 
-utilities.save_history_train('./compare_quanv_filter/' + str(constant.quanv_num_filter), 'h2', historiesH2)
-np.savetxt('compare_quanv_filter/' + str(constant.quanv_num_filter) + '/h2test.txt', test_accuraciesH2)
-np.savetxt('compare_quanv_filter/' + str(constant.quanv_num_filter) + '/time.txt', [(end - start)])
+utilities.save_history_train('./exps_mnist/h2_' + str(constant.quav_num_filter) + 'filter' + str(
+    constant.quav_num_filter) + 'x' + str(constant.quav_num_filter), 'h2', historiesH2)
+np.savetxt('exps_mnist/h2_' + str(constant.quav_num_filter) + 'filter' + str(constant.quav_num_filter) + 'x' + str(constant.quav_num_filter) + '/h2test.txt', test_accuraciesH2)
+np.savetxt('exps_mnist/h2_' + str(constant.quav_num_filter) + 'filter' + str(constant.quav_num_filter) + 'x' + str(constant.quav_num_filter) + '/time.txt', [(end - start)])

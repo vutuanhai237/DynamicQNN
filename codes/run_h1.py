@@ -24,6 +24,7 @@ for i in range(0, 20):
     test_accuraciesH1.append(test_accuracy)
 end = time.perf_counter()
 
-utilities.save_history_train('./exps_mnist/h1_' + str(constant.conv_num_filter) + 'filter' + str(constant.conv_size_filter) + 'x' + str(constant.conv_size_filter), 'h1', historiesH1)
+utilities.save_history_train('./exps_mnist/h1_' + str(constant.conv_num_filter) + 'filter' + str(
+    constant.conv_size_filter) + 'x' + str(constant.conv_size_filter), 'h1', historiesH1)
 np.savetxt('exps_mnist/h1_' + str(constant.conv_num_filter) + 'filter' + str(constant.conv_size_filter) + 'x' + str(constant.conv_size_filter) + '/h1test.txt', test_accuraciesH1)
 np.savetxt('exps_mnist/h1_' + str(constant.conv_num_filter) + 'filter' + str(constant.conv_size_filter) + 'x' + str(constant.conv_size_filter) + '/time.txt', [(end - start)])
