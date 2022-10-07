@@ -52,6 +52,7 @@ def add_padding(matrix: np.ndarray,
     Returns:
         np.ndarray: Padded matrix with shape `n + 2 * r, m + 2 * c`.
     """
+    matrix = np.squeeze(matrix)
     n, m = matrix.shape
     r, c = padding
     padded_matrix = np.zeros((n + r * 2, m + c * 2))
@@ -75,7 +76,10 @@ def connector(vector, filter: types.FunctionType):
     Returns:
         np.ndarray: probability vector
     """
+    
     n = math.ceil(np.log2(vector.shape[0]))
+    if vector.shape[0] < n**2:
+        vector = np.concatenate([vector, np.array([0]*(n**2-vector.shape[0]))])
     qc = qiskit.QuantumCircuit(n, n)
     qc.initialize(vector, range(0, n))
     qc = filter(qc)
@@ -86,9 +90,10 @@ def connector(vector, filter: types.FunctionType):
 
 def quanv(image, filter: types.FunctionType):
     n_image = image.shape[0]
-    kernel_size = constant.quanv_size_kernel
+    kernel_size = constant.quanv_size_filter
     if n_image % kernel_size != 0:
-        image = add_padding(image, ((n_image % kernel_size) // 2, (n_image % kernel_size) // 2))
+        padding_size = kernel_size - n_image % kernel_size
+        image = add_padding(image, (padding_size // 2, padding_size // 2))
         n_image = image.shape[0]
     num_deep = constant.get_quanv_num_filter(kernel_size)
     out = np.zeros((n_image // kernel_size, n_image // kernel_size,
