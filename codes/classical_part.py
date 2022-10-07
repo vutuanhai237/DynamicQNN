@@ -86,7 +86,7 @@ def connector(vector, filter: types.FunctionType):
 
 def quanv(image, filter: types.FunctionType):
     n_image = image.shape[0]
-    kernel_size = constant.kernel_size
+    kernel_size = constant.quanv_size_kernel
     if n_image % kernel_size != 0:
         image = add_padding(image, ((n_image % kernel_size) // 2, (n_image % kernel_size) // 2))
         n_image = image.shape[0]
