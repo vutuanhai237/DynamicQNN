@@ -68,9 +68,6 @@ def connector(vector, filter: types.FunctionType):
     6 x 6 => require 6 qubits
     7 x 7 => require 6 qubits
     8 x 8 => require 6 qubits
-    9 x 9 => 
-
-
     Args:
         vector (np.ndarray): quantum state
         filter (types.FunctionType): quantum circuit
@@ -78,7 +75,7 @@ def connector(vector, filter: types.FunctionType):
     Returns:
         np.ndarray: probability vector
     """
-    n = int(np.log2(vector.shape[0]))
+    n = math.ceil(np.log2(vector.shape[0]))
     qc = qiskit.QuantumCircuit(n, n)
     qc.initialize(vector, range(0, n))
     qc = filter(qc)
@@ -93,7 +90,7 @@ def quanv(image, filter: types.FunctionType):
     if n_image % kernel_size != 0:
         image = add_padding(image, ((n_image % kernel_size) // 2, (n_image % kernel_size) // 2))
         n_image = image.shape[0]
-    num_deep = constant.get_num_quanv_filter(kernel_size)
+    num_deep = constant.get_quanv_num_filter(kernel_size)
     out = np.zeros((n_image // kernel_size, n_image // kernel_size,
                    num_deep))
     for i in range(0, n_image, kernel_size):
@@ -119,9 +116,9 @@ def quanv(image, filter: types.FunctionType):
 
 def classical_model():
     model = keras.models.Sequential()
-    model.add(krl.Conv2D(constant.num_conv_filter, (4, 4), activation='relu', input_shape=(28, 28, 1)))
+    model.add(krl.Conv2D(constant.conv_num_filter, (constant.conv_size_filter, constant.conv_size_filter), activation='relu', input_shape=(28, 28, 1)))
     model.add(krl.MaxPooling2D(pool_size=(2, 2)))
-    model.add(krl.Conv2D(constant.num_conv_filter, (4, 4), activation='relu'))
+    model.add(krl.Conv2D(constant.conv_num_filter, (constant.conv_size_filter, constant.conv_size_filter), activation='relu'))
     model.add(krl.MaxPooling2D(pool_size=(2, 2)))
     model.add(krl.Flatten())
     model.add(krl.Dense(1024, activation='relu'))
