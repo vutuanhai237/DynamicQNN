@@ -5,9 +5,9 @@ import numpy as np
 
 
 # Training hyperparameter
-num_conv_filter = 40
+num_conv_filter = 20
 num_quanv_filter = 1
-
+kernel_size = 4
 num_shots = 10000
 learning_rate = 0.01
 noise_prob = 0.01

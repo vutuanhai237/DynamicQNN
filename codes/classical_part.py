@@ -59,7 +59,25 @@ def add_padding(matrix: np.ndarray,
     return padded_matrix
 
 
-def connector(vector, filter):
+def connector(vector, filter: types.FunctionType):
+    """If sub-image has the size
+    2 x 2 => require 2 qubits
+    3 x 3 => require 4 qubits
+    4 x 4 => require 4 qubits
+    5 x 5 => require 5 qubits
+    6 x 6 => require 6 qubits
+    7 x 7 => require 6 qubits
+    8 x 8 => require 6 qubits
+    9 x 9 => 
+
+
+    Args:
+        vector (np.ndarray): quantum state
+        filter (types.FunctionType): quantum circuit
+
+    Returns:
+        np.ndarray: probability vector
+    """
     n = int(np.log2(vector.shape[0]))
     qc = qiskit.QuantumCircuit(n, n)
     qc.initialize(vector, range(0, n))
@@ -71,9 +89,9 @@ def connector(vector, filter):
 
 def quanv(image, filter: types.FunctionType):
     n_image = image.shape[0]
-    kernel_size = 4
-    if n_image % 4 != 0:
-        image = add_padding(image, ((n_image % 4) // 2, (n_image % 4) // 2))
+    kernel_size = constant.kernel_size
+    if n_image % kernel_size != 0:
+        image = add_padding(image, ((n_image % kernel_size) // 2, (n_image % kernel_size) // 2))
         n_image = image.shape[0]
     num_deep = constant.get_num_quanv_filter(kernel_size)
     out = np.zeros((n_image // kernel_size, n_image // kernel_size,
