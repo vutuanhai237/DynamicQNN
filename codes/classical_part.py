@@ -78,8 +78,8 @@ def connector(vector, filter: types.FunctionType):
     """
     
     n = math.ceil(np.log2(vector.shape[0]))
-    if vector.shape[0] < n**2:
-        vector = np.concatenate([vector, np.array([0]*(n**2-vector.shape[0]))])
+    if vector.shape[0] < 2**n:
+        vector = np.concatenate([vector, np.array([0]*(2**n-vector.shape[0]))])
     qc = qiskit.QuantumCircuit(n, n)
     qc.initialize(vector, range(0, n))
     qc = filter(qc)
