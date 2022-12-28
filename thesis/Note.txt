@@ -1,0 +1,13 @@
+- Đưa ra biểu đồ so sánh số lượng tham số
+CNN tăng theo mũ, QNN tăng theo log
+- Filter size của CNN theo lý thuyết là số nguyên tố
+nên khi tăng lên thì nó cunngx ko tăng acc
+- Filter size của QNN cao ở số 2 và 4 vì 
+nó ko bị cắt phần đuôi.
+- Test trên model QCNN thì so sánh mới có
+ý nghĩa
+
+- Ưu điểm QNN là số lượng tham số x2 nhưng chỉ tăng 1 qubit
+Giờ test mạng shallow với deep với cùng n lớp
+deep hơn có ok hơn ko
+=> Chứng minh QNN ok hơn
