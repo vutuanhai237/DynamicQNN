@@ -4,9 +4,10 @@ import keras.layers as krl
 import qiskit
 import constant
 import types
+import cv2
 import random, math
 from keras.utils import np_utils
-from keras.datasets import mnist, fashion_mnist
+from keras.datasets import mnist, fashion_mnist, cifar10
 import numpy as np
 import entangled_circuit
 from typing import List, Tuple, Union
@@ -131,6 +132,17 @@ def classical_model():
     model.add(krl.Dense(10, activation='softmax'))
     return model
 
+def classical_model2():
+    model = keras.models.Sequential()
+    model.add(krl.Conv2D(constant.conv_num_filter, (constant.conv_size_filter, constant.conv_size_filter), activation='relu', input_shape=(32, 32, 1)))
+    model.add(krl.MaxPooling2D(pool_size=(2, 2)))
+    model.add(krl.Conv2D(constant.conv_num_filter, (constant.conv_size_filter, constant.conv_size_filter), activation='relu'))
+    model.add(krl.MaxPooling2D(pool_size=(2, 2)))
+    model.add(krl.Flatten())
+    model.add(krl.Dense(1024, activation='relu'))
+    model.add(krl.Dropout(0.4))
+    model.add(krl.Dense(10, activation='softmax'))
+    return model
 
 def hybrid_model():
     model = keras.models.Sequential()
@@ -225,6 +237,55 @@ def load_mnist_fashion(n_train: int, n_val: int, n_test: int, filter: types.Func
     x_train = x_train.reshape(x_train.shape[0], 28, 28, 1)
     x_val = x_val.reshape(x_val.shape[0], 28, 28, 1)
     x_test = x_test.reshape(x_test.shape[0], 28, 28, 1)
+    # One-hot encoding
+    y_train = np_utils.to_categorical(y_train, 10)
+    y_val = np_utils.to_categorical(y_val, 10)
+    y_test = np_utils.to_categorical(y_test, 10)
+    # Create post-processing data (the data that has gone through the quanvolutional layer)
+    if is_take_xq:
+        xq_train = converter(x_train, filter)
+        xq_val = converter(x_val, filter)
+        xq_test = converter(x_test, filter)
+
+        return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
+    else:
+        return x_train, y_train, x_val, y_val, x_test, y_test
+
+
+def load_cifar10(n_train: int, n_val: int, n_test: int, filter: types.FunctionType, is_take_xq=False):
+    """_summary_
+
+    Args:
+        n_train (int): number of train items
+        n_val (int): number of validation items
+        n_test (int): number of test items
+        quanv (types.FunctionType, optional): _description_. Defaults to quantum_model.
+
+    Returns:
+        tuple: Splitted dataset
+    """
+
+    (x_train, y_train), (x_test, y_test) = cifar10.load_data()
+    # Get k random item in whole MNIST has 60000 train / 10000 test
+    random_itrain = random.sample(range(0, 50000), n_train + n_val)
+    random_itest = random.sample(range(0, 10000), n_test)
+    x_train1 = np.asarray([x_train[i] for i in random_itrain])
+    y_train1 = np.asarray([y_train[i] for i in random_itrain])
+    x_test = np.asarray([x_test[i] for i in random_itest])
+    y_test = np.asarray([y_test[i] for i in random_itest])
+    # Split train / val / test
+    x_train, y_train = x_train1[:n_train, :], y_train1[:n_train]
+    x_val, y_val = x_train1[n_train:n_train +
+                            n_val, :], y_train1[n_train:n_train + n_val]
+    x_test, y_test = x_test[:n_test, :], y_test[:n_test]
+    
+    x_train = np.array([cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) for image in x_train])
+    x_val = np.array([cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) for image in x_val])
+    x_test = np.array([cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) for image in x_test])
+    # Reshape for fitting with Keras input
+    x_train = x_train.reshape(x_train.shape[0], 32, 32, 1)
+    x_val = x_val.reshape(x_val.shape[0], 32, 32, 1)
+    x_test = x_test.reshape(x_test.shape[0], 32, 32, 1)
     # One-hot encoding
     y_train = np_utils.to_categorical(y_train, 10)
     y_val = np_utils.to_categorical(y_val, 10)
