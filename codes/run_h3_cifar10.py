@@ -5,10 +5,10 @@ historiesH3 = []
 test_accuraciesH3 = []
    
 start = time.perf_counter()
-for i in range(0, 1):
+for i in range(0, 20):
       print('Iteration', i)
       x_train, y_train, x_val, y_val, x_test, y_test = classical_part.load_cifar10(
-            12, 3, 3, entangled_circuit.quanvolutional)
+            1200, 300, 300, entangled_circuit.quanvolutional)
       
       hmodel = classical_part.hybrid_model()
       hmodel.compile(loss='categorical_crossentropy',

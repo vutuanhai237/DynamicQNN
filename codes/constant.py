@@ -5,7 +5,7 @@ import numpy as np
 
 
 # Training hyperparameter
-conv_num_filter = 1
+conv_num_filter = 50
 quanv_num_filter = 4
 quanv_size_filter = 2
 conv_size_filter = 2
