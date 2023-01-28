@@ -21,6 +21,6 @@ for i in range(0, 20):
       test_accuraciesH3.append(test_accuracy)
 end = time.perf_counter()
 
-utilities.save_history_train('./exps_mnist_fashion/h3', 'h3', historiesH3)
-np.savetxt('exps_mnist_fashion/h3/h1test.txt', test_accuraciesH3)
-np.savetxt('exps_mnist_fashion/h3/time.txt', [(end - start)])
+utilities.save_history_train('./fmnist/h3', 'h3', historiesH3)
+np.savetxt('fmnist/h3/h1test.txt', test_accuraciesH3)
+np.savetxt('fmnist/h3/time.txt', [(end - start)])

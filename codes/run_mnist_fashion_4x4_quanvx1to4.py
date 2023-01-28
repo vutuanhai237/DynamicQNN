@@ -30,5 +30,5 @@ for iquanv in list_of_quanv:
             test_accuraciesH2.append(test_accuracy)
       
 
-      utilities.save_history_train('./exps_mnist_fashion/h2_4x4filter_quanv' + str(iquanv), 'h2', historiesH2)
-      np.savetxt('exps_mnist_fashion/h2_4x4filter_quanv' + str(iquanv) + '/h2test.txt', test_accuraciesH2)
+      utilities.save_history_train('./fmnist/h2_4x4filter_quanv' + str(iquanv), 'h2', historiesH2)
+      np.savetxt('fmnist/h2_4x4filter_quanv' + str(iquanv) + '/h2test.txt', test_accuraciesH2)

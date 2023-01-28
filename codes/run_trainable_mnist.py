@@ -25,5 +25,5 @@ for i in range(0, 20):
     test_accuraciesH2.append(test_accuracy)
 
 
-utilities.save_history_train('./exps_mnist', 'h2', historiesH2)
-np.savetxt('exps_mnist/h2test.txt', test_accuraciesH2)
+utilities.save_history_train('./mnist', 'h2', historiesH2)
+np.savetxt('mnist/h2test.txt', test_accuraciesH2)
