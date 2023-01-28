@@ -4,10 +4,9 @@ import utilities
 import multiprocessing
 
 list_of_quanv = {
-      '1': entangled_circuit.quanvolutional1,
-      '2': entangled_circuit.quanvolutional2,  
-      '3': entangled_circuit.quanvolutional3,
-      '4': entangled_circuit.quanvolutional4,
+      '13': entangled_circuit.quanvolutional13,
+      '12': entangled_circuit.quanvolutional12,  
+      '11': entangled_circuit.quanvolutional11
 }
 
 def run_quanv(iquanv, quanv):
