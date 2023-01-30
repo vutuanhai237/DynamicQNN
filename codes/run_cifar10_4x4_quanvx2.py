@@ -26,8 +26,8 @@ def run_quanv(iquanv, quanv):
             _, test_accuracy = hmodel.evaluate(xq_test, y_test)
             test_accuraciesH2.append(test_accuracy)
 
-      utilities.save_history_train('./compare_type_quanv_cifar10/h2_4x4filter_quanv' + str(iquanv), 'h2', historiesH2)
-      np.savetxt('compare_type_quanv_cifar10/h2_4x4filter_quanv' + str(iquanv) + '/h2test.txt', test_accuraciesH2)
+      utilities.save_history_train('./compare_type_quanv_mnist_cifar10/h2_4x4filter_quanv' + str(iquanv), 'h2', historiesH2)
+      np.savetxt('compare_type_quanv_mnist_cifar10/h2_4x4filter_quanv' + str(iquanv) + '/h2test.txt', test_accuraciesH2)
 
 threads = []
 
