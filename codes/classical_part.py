@@ -94,7 +94,7 @@ def quanv(image, filter: types.FunctionType):
     kernel_size = constant.quanv_size_filter
     if n_image % kernel_size != 0:
         padding_size = kernel_size - n_image % kernel_size
-        image = add_padding(image, (padding_size // 2, padding_size // 2))
+        image = add_padding(image, (int(np.ceil(padding_size / 2)), int(np.ceil(padding_size / 2))))
         n_image = image.shape[0]
     num_deep = constant.get_quanv_num_filter(kernel_size)
     out = np.zeros((n_image // kernel_size, n_image // kernel_size,
@@ -114,9 +114,12 @@ def quanv(image, filter: types.FunctionType):
             for i in range(num_filter):
                 exp_values = connector(sub_image.flatten(), filter)
                 exp_valuess = np.concatenate((exp_valuess, exp_values), axis=None)
-            
+            #print(sub_image.flatten())
             for c in range(out.shape[2]):
-                out[i // kernel_size, j // kernel_size, c] = exp_valuess[c]
+                try:
+                    out[i // kernel_size, j // kernel_size, c] = exp_valuess[c]
+                except:
+                    pass
     return out
 
 
