@@ -37,7 +37,7 @@ def create_Walternating(qc: qiskit.QuantumCircuit, thetas: np.ndarray, index_lay
         for i in range(0, qc.num_qubits - 1, 2):
             qc.cry(thetas[t], i, i + 1)
             t += 1
-    return 
+    return qc
 
 def create_Walltoall(qc: qiskit.QuantumCircuit, thetas: np.ndarray, limit=0):
     """Create Walltoall
@@ -69,10 +69,7 @@ def create_Wchain_layered_ansatz(qc: qiskit.QuantumCircuit):
         - qiskit.QuantumCircuit
     """
     n = qc.num_qubits
-    if isinstance(num_layers, int) != True:
-        num_layers = (num_layers['num_layers'])
-
-    thetas = np.random.uniform(low=0, high=2*np.pi, size=(num_layers * (n * 3)))
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n * 3))
     qc = create_Wchain(qc, thetas[:n])
     qc.barrier()
     qc = xz_layer(qc, thetas[n:])
@@ -87,7 +84,7 @@ def calculate_n_walternating(index_layers, num_qubits):
 
     return n_walternating
 
-def create_Walternating_layered_ansatz(qc: qiskit.QuantumCircuit):
+def create_Walternating_layered_ansatz(qc):
     """Create Walternating layered ansatz
     Args:
         - qc (qiskit.QuantumCircuit): init circuit
@@ -96,14 +93,9 @@ def create_Walternating_layered_ansatz(qc: qiskit.QuantumCircuit):
     Returns:
         - qiskit.QuantumCircuit
     """
-    n = qc.num_qubits
-    if isinstance(num_layers, int) != True:
-        num_layers = (num_layers['num_layers'])
-
-    n_alternating = calculate_n_walternating(0, n)
-    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n_alternating + (n * 2)))
+    n_alternating = calculate_n_walternating(0, qc.num_qubits)
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n_alternating + (qc.num_qubits * 2)))
     qc = create_Walternating(qc, thetas[:n_alternating], 0)
-    qc.barrier()
     qc = xz_layer(qc, thetas[n_alternating:])
     return qc
 
@@ -114,8 +106,7 @@ def calculate_n_walltoall(n):
     return n_walltoall
 
 
-def create_Walltoall_layered_ansatz(qc: qiskit.QuantumCircuit,
-                                  ):
+def create_Walltoall_layered_ansatz(qc: qiskit.QuantumCircuit):
     """Create W all to all ansatz
     Args:
         - qc (qiskit.QuantumCircuit): init circuit
@@ -128,11 +119,10 @@ def create_Walltoall_layered_ansatz(qc: qiskit.QuantumCircuit,
     n_walltoall = calculate_n_walltoall(n)
     thetas = np.random.uniform(low=0, high=2*np.pi, size=(n_walltoall + (n * 2)))
     qc = create_Walltoall(qc, thetas[0:n_walltoall])
-    qc.barrier()
     qc = xz_layer(qc, thetas[n_walltoall:])
     return qc
 
-def xz_layer(qc: qiskit.QuantumCircuit, thetas) -> qiskit.QuantumCircuit:
+def xz_layer(qc, thetas) -> qiskit.QuantumCircuit:
     """_summary_
 
     Args:

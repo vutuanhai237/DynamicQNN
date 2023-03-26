@@ -15,7 +15,7 @@ def run_quanv(iquanv, quanv):
       for i in range(0,1):
             print('Iteration', i)
             x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_cifar10(
-                  12, 3, 3, quanv, True)
+                  1200, 300, 300, quanv, True)
             
             hmodel = classical_part.hybrid_model()
             hmodel.compile(loss='categorical_crossentropy',
@@ -29,16 +29,7 @@ def run_quanv(iquanv, quanv):
 
       utilities.save_history_train('./compare_type_quanv_cifar10/h2_4x4filter_quanv' + (iquanv), 'h2', historiesH2)
       np.savetxt('compare_type_quanv_cifar10/h2_4x4filter_quanv' + (iquanv) + '/h2test.txt', test_accuraciesH2)
-
-threads = []
-
-for iquanv in list_of_quanv:
-      threads.append(multiprocessing.Process(target = run_quanv, args=(iquanv, list_of_quanv[iquanv])))
-
-for thread in threads:
-      thread.start()
-
-for thread in threads:
-      thread.join()
-
+      
+name = 'alltoall'
+run_quanv(name, list_of_quanv[name])
 print("Done!")
