@@ -2,6 +2,136 @@
 import qiskit, classical_part
 import numpy as np
 import math
+
+def create_Wchain(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
+    """Create W_chain ansatz
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+    Returns:
+        - qiskit.QuantumCircuit
+    """
+    for i in range(0, qc.num_qubits - 1):
+        qc.cry(thetas[i], i, i + 1)
+    qc.cry(thetas[-1], qc.num_qubits - 1, 0)
+    return qc
+
+def create_Walternating(qc: qiskit.QuantumCircuit, thetas: np.ndarray, index_layer):
+    """Create W_alternating ansatz
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+        - index_layer (int)
+    Returns:
+        - qiskit.QuantumCircuit
+    """
+    t = 0
+    if index_layer % 2 == 0:
+        # Even
+        for i in range(1, qc.num_qubits - 1, 2):
+            qc.cry(thetas[t], i, i + 1)
+            t += 1
+        qc.cry(thetas[-1], 0, qc.num_qubits - 1)
+    else:
+        # Odd
+        for i in range(0, qc.num_qubits - 1, 2):
+            qc.cry(thetas[t], i, i + 1)
+            t += 1
+    return 
+
+def create_Walltoall(qc: qiskit.QuantumCircuit, thetas: np.ndarray, limit=0):
+    """Create Walltoall
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+        - limit (int): limit layer
+    Returns:
+        - qiskit.QuantumCircuit
+    """
+    if limit == 0:
+        limit = len(thetas)
+    t = 0
+    for i in range(0, qc.num_qubits):
+        for j in range(i + 1, qc.num_qubits):
+            qc.cry(thetas[t], i, j)
+            t += 1
+            if t == limit:
+                return qc
+    return qc
+
+def create_Wchain_layered_ansatz(qc: qiskit.QuantumCircuit):
+    """Create Alternating layered ansatz
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+        - n_layers (int): numpy of layers
+    Returns:
+        - qiskit.QuantumCircuit
+    """
+    n = qc.num_qubits
+    if isinstance(num_layers, int) != True:
+        num_layers = (num_layers['num_layers'])
+
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(num_layers * (n * 3)))
+    qc = create_Wchain(qc, thetas[:n])
+    qc.barrier()
+    qc = xz_layer(qc, thetas[n:])
+    return qc
+
+
+def calculate_n_walternating(index_layers, num_qubits):
+    if index_layers % 2 == 0:
+        n_walternating = int(num_qubits / 2)
+    else:
+        n_walternating = math.ceil(num_qubits / 2)
+
+    return n_walternating
+
+def create_Walternating_layered_ansatz(qc: qiskit.QuantumCircuit):
+    """Create Walternating layered ansatz
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+        - n_layers (Int): numpy of layers
+    Returns:
+        - qiskit.QuantumCircuit
+    """
+    n = qc.num_qubits
+    if isinstance(num_layers, int) != True:
+        num_layers = (num_layers['num_layers'])
+
+    n_alternating = calculate_n_walternating(0, n)
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n_alternating + (n * 2)))
+    qc = create_Walternating(qc, thetas[:n_alternating], 0)
+    qc.barrier()
+    qc = xz_layer(qc, thetas[n_alternating:])
+    return qc
+
+def calculate_n_walltoall(n):
+    n_walltoall = 0
+    for i in range(1, n):
+        n_walltoall += i
+    return n_walltoall
+
+
+def create_Walltoall_layered_ansatz(qc: qiskit.QuantumCircuit,
+                                  ):
+    """Create W all to all ansatz
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+        - num_layers (int): numpy of layers
+    Returns:
+        - qiskit.QuantumCircuit
+    """
+    n = qc.num_qubits
+    n_walltoall = calculate_n_walltoall(n)
+    thetas = np.random.uniform(low=0, high=2*np.pi, size=(n_walltoall + (n * 2)))
+    qc = create_Walltoall(qc, thetas[0:n_walltoall])
+    qc.barrier()
+    qc = xz_layer(qc, thetas[n_walltoall:])
+    return qc
+
 def xz_layer(qc: qiskit.QuantumCircuit, thetas) -> qiskit.QuantumCircuit:
     """_summary_
 
@@ -66,6 +196,13 @@ def entangled_cnot_layer(qc: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
         qc.cnot(n - i - 1, n - 2 - i)
         k += 1
     return qc
+
+def trainable_quanvolutional(qc, thetas):
+    n = qc.num_qubits
+    for i in range(1, n):
+        qc.cry(thetas[i], 0, i)
+    return qc
+
 
 def quanvolutional(qc):
     n = qc.num_qubits

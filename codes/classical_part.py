@@ -89,6 +89,7 @@ def connector(vector, filter: types.FunctionType):
     return normalized_count
 
 
+
 def quanv(image, filter: types.FunctionType):
     n_image = image.shape[0]
     kernel_size = constant.quanv_size_filter
@@ -206,7 +207,7 @@ def load_mnist(n_train: int, n_val: int, n_test: int, filter: types.FunctionType
         xq_test = converter(x_test, filter)
         return x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test
     else:
-
+        
         return x_train, y_train, x_val, y_val, x_test, y_test
 
 
