@@ -14,7 +14,7 @@ def run_quanv(iquanv, quanv):
       test_accuraciesH2 = []
       for i in range(0,1):
             print('Iteration', i)
-            x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_cifar10(
+            x_train, xq_train, y_train, x_val, xq_val, y_val, x_test, xq_test, y_test = classical_part.load_mnist_fashion(
                   1200, 300, 300, quanv, True)
             
             hmodel = classical_part.hybrid_model()
@@ -27,8 +27,8 @@ def run_quanv(iquanv, quanv):
             _, test_accuracy = hmodel.evaluate(xq_test, y_test)
             test_accuraciesH2.append(test_accuracy)
 
-      utilities.save_history_train('./compare_type_quanv_cifar10/h2_4x4filter_quanv' + (iquanv), 'h2', historiesH2)
-      np.savetxt('compare_type_quanv_cifar10/h2_4x4filter_quanv' + (iquanv) + '/h2test.txt', test_accuraciesH2)
+      utilities.save_history_train('./compare_type_quanv_fmnist/h2_4x4filter_quanv' + (iquanv), 'h2', historiesH2)
+      np.savetxt('compare_type_quanv_fmnist/h2_4x4filter_quanv' + (iquanv) + '/h2test.txt', test_accuraciesH2)
       
 name = 'alltoall'
 run_quanv(name, list_of_quanv[name])
