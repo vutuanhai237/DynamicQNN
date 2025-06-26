@@ -35,7 +35,7 @@ def processing(invocation_input):
 
 
 def post_processing(job_result):
-    return H2.history
+    return H2.history, 
 
 
 def hybrid_model():
